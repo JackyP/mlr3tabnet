@@ -1,20 +1,20 @@
-#' @title Classification Random Forest Learner
+#' @title TabNet for Regression
 #'
-#' @aliases mlr_learners_classif.randomForest
-#' @format [R6::R6Class] inheriting from [mlr3::LearnerClassif].
+#' @aliases mlr_learners_regr.TabNet
+#' @format [R6::R6Class] inheriting from [mlr3::LearnerRegr].
 #'
 #' @description
-#' A [mlr3::LearnerClassif] for a classification random forest implemented in randomForest::randomForest()] in package \CRANpkg{randomForest}.
+#' A [mlr3::LearnerRegr] for a TabNet classification model using the pytorch-tabnet Python package.
 #'
 #' @references
-#' Breiman, L. (2001).
-#' Random Forests
-#' Machine Learning
-#' \url{https://doi.org/10.1023/A:1010933404324}
+#' Arik, Sercan O.; Pfister, Tomas (2019).
+#' TabNet: Attentive Interpretable Tabular Learning
+#' arXiv:1908.07442
+#' \url{https://arxiv.org/abs/1908.07442}
 #'
 #' @export
-LearnerClassifRandomForest <- R6Class("LearnerClassifRandomForest",
-  inherit = LearnerClassif, # Adapt the name to your learner. For regression learners inherit = LearnerRegr.
+LearnerRegrTabNet <- R6Class("LearnerRegrTabNet",
+  inherit = LearnerRegr, # Adapt the name to your learner. For regression learners inherit = LearnerRegr.
   public = list(
     initialize = function() {
       ps <- ParamSet$new( # parameter set using the paradox package
@@ -97,9 +97,9 @@ LearnerClassifRandomForest <- R6Class("LearnerClassifRandomForest",
 
       # Return a prediction object with PredictionClassif$new() or PredictionRegr$new()
       if (self$predict_type == "response") {
-        PredictionClassif$new(task = task, response = p)
+        PredictionRegr$new(task = task, response = p)
       } else {
-        PredictionClassif$new(task = task, prob = p)
+        PredictionRegr$new(task = task, prob = p)
       }
     },
 

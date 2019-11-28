@@ -1,41 +1,38 @@
-#' @title Classification Random Forest Learner
+#' @title Rossman Tabular Learner for Classification
 #'
-#' @aliases mlr_learners_classif.randomForest
+#' @aliases mlr_learners_classif.Rossman
 #' @format [R6::R6Class] inheriting from [mlr3::LearnerClassif].
 #'
 #' @description
-#' A [mlr3::LearnerClassif] for a classification random forest implemented in randomForest::randomForest()] in package \CRANpkg{randomForest}.
+#' A [mlr3::LearnerClassif] for a Fast.ai Tabular Model.
 #'
 #' @references
-#' Breiman, L. (2001).
-#' Random Forests
-#' Machine Learning
-#' \url{https://doi.org/10.1023/A:1010933404324}
+#' An Introduction to Deep Learning for Tabular Data
+#' \url{https://www.fast.ai/2018/04/29/categorical-embeddings/}
 #'
 #' @export
-LearnerClassifRandomForest <- R6Class("LearnerClassifRandomForest",
+LearnerClassifRossman <- R6Class("LearnerClassifRossman",
   inherit = LearnerClassif, # Adapt the name to your learner. For regression learners inherit = LearnerRegr.
   public = list(
     initialize = function() {
       ps <- ParamSet$new( # parameter set using the paradox package
         params = list(
-          ParamInt$new(id = "ntree", default = 500L, lower = 1L, tags = c("train", "predict")),
-          ParamInt$new(id = "mtry", lower = 1L, tags = "train"),
-          ParamLgl$new(id = "replace", default = TRUE, tags = "train"),
-          ParamUty$new(id = "classwt", default = NULL, tags = "train"), # lower = 0
-          ParamUty$new(id = "cutoff", tags = "train"),
-          ParamUty$new(id = "strata", tags = "train"),
-          ParamUty$new(id = "sampsize", tags = "train"),
-          ParamInt$new(id = "nodesize", default = 1L, lower = 1L, tags = "train"),
-          ParamInt$new(id = "maxnodes", lower = 1L, tags = "train"),
-          ParamFct$new(id = "importance", default = "none", levels = c("accuracy", "gini", "none"), tag = "train"), # importance is a logical value in the randomForest package.
-          ParamLgl$new(id = "localImp", default = FALSE, tags = "train"),
-          ParamLgl$new(id = "proximity", default = FALSE, tags = "train"),
-          ParamLgl$new(id = "oob.prox", tags = "train"),
-          ParamLgl$new(id = "norm.votes", default = TRUE, tags = "train"),
-          ParamLgl$new(id = "do.trace", default = FALSE, tags = "train"),
-          ParamLgl$new(id = "keep.forest", default = TRUE, tags = "train"),
-          ParamLgl$new(id = "keep.inbag", default = FALSE, tags = "train")
+          # Tabular Model params https://docs.fast.ai/tabular.html
+          ParamUty$new(id = "layers", tags = "train"),
+          ParamUty$new(id = "embedding_sizes", tags = "train"),
+          ParamUty$new(id = "metrics", tags = "train"),
+          ParamUty$new(id = "layer_dropout_percentages", tags = "train"), #ps
+          ParamDbl$new(id = "embedding_dropout_percentage", default=0.0, lower=0.0, upper=1.0, tags = "train"), #emb_drop
+          ParamUty$new(id = "y_range", tags = "train"),
+          ParamLgl$new(id = "use_batchnorm", default = TRUE, tags = "train"),
+          # lr_find params https://docs.fast.ai/train.html#lr_find
+          ParamDbl$new(id = "start_lr", default = 1e-07, lower=0, tags = "train"),
+          ParamDbl$new(id = "end_lr", default = 10.0, lower=0, tags = "train"),
+          # fit_one_cycle params https://docs.fast.ai/train.html#fit_one_cycle
+          ParamInt$new(id = "cycle_length", default=1L, lower = 1L, tags = "train"),
+          # other params
+          ParamDbl$new(id = "validation_split", lower = 0, upper = 1, default = 1/3, tags = "train"),
+          ParamInt$new(id = "batch_size", default = 128L, lower = 1L, tags = c("train", "predict"))
         )
       )
 
